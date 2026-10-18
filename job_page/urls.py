@@ -1,17 +1,20 @@
 
 from django.urls import path
 
-from .views import JobApplicationCreateView
+from .views import (
+    JobApplicationListCreateView,
+    JobApplicationDetailView,
+)
 
 urlpatterns = [
     path(
         "applications/",
-        JobApplicationCreateView.as_view(),
-        name="application-create",
+        JobApplicationListCreateView.as_view(),
+        name="application-list-create",
     ),
     path(
         "applications/<int:pk>/",
-        JobApplicationCreateView.as_view(),
+        JobApplicationDetailView.as_view(),
         name="application-detail",
     ),
 ]

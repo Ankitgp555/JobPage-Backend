@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "job_page",
     "corsheaders",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -163,3 +164,13 @@ CORS_ALLOWED_ORIGINS = [
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "JobPage API",
+    "DESCRIPTION": "API documentation for the JobPage application",
+    "VERSION": "1.0.0",
+}
