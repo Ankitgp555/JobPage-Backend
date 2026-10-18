@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from drf_spectacular.utils import extend_schema
 
 from .models import BasicInformation
 from .serializers import BasicInformationSerializer
@@ -105,6 +106,15 @@ class JobApplicationListCreateView(APIView):
             status=status.HTTP_200_OK,
         )
 
+    @extend_schema(
+    summary="Create a new application",
+    description=(
+        "Submit candidate application data as JSON. "
+        "For resume and other file uploads, use multipart/form-data."
+    ),
+    request=BasicInformationSerializer,
+    responses={201: BasicInformationSerializer},
+    )
     @transaction.atomic
     def post(self, request):
         """Create a new application."""
@@ -152,7 +162,13 @@ class JobApplicationDetailView(APIView):
             {"application": serializer.data},
             status=status.HTTP_200_OK,
         )
-
+    
+    @extend_schema(
+    summary="Update an application",
+    description="Partially update an existing candidate application.",
+    request=BasicInformationSerializer,
+    responses={200: BasicInformationSerializer},
+    )
     @transaction.atomic
     def patch(self, request, pk):
         """Partially update an existing application."""
