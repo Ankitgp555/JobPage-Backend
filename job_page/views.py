@@ -109,12 +109,40 @@ class JobApplicationListCreateView(APIView):
     @extend_schema(
     summary="Create a new application",
     description=(
-        "Submit candidate application data as JSON. "
-        "For resume and other file uploads, use multipart/form-data."
+        "Submit a candidate application using multipart/form-data. "
+        "Send candidate_data as a JSON string and upload files using "
+        "resume_file, cover_letter_file, and education_document_0, "
+        "education_document_1, etc."
     ),
-    request=BasicInformationSerializer,
+    request={
+        "multipart/form-data": {
+            "type": "object",
+            "properties": {
+                "candidate_data": {
+                    "type": "string",
+                    "description": "Candidate application data encoded as JSON.",
+                },
+                "resume_file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Required resume file.",
+                },
+                "cover_letter_file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Optional cover letter file.",
+                },
+                "education_document_0": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Optional document for the first education record.",
+                },
+            },
+            "required": ["candidate_data", "resume_file"],
+        }
+    },
     responses={201: BasicInformationSerializer},
-    )
+)
     @transaction.atomic
     def post(self, request):
         """Create a new application."""
@@ -165,8 +193,39 @@ class JobApplicationDetailView(APIView):
     
     @extend_schema(
     summary="Update an application",
-    description="Partially update an existing candidate application.",
-    request=BasicInformationSerializer,
+    description=(
+        "Partially update an existing candidate application using "
+        "multipart/form-data. Send candidate_data as a JSON string. "
+        "Upload files using resume_file, cover_letter_file, and "
+        "education_document_0, education_document_1, etc."
+    ),
+    request={
+        "multipart/form-data": {
+            "type": "object",
+            "properties": {
+                "candidate_data": {
+                    "type": "string",
+                    "description": "Updated candidate data encoded as JSON.",
+                },
+                "resume_file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Optional replacement resume file.",
+                },
+                "cover_letter_file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Optional replacement cover letter file.",
+                },
+                "education_document_0": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Optional document for the first education record.",
+                },
+            },
+            "required": ["candidate_data"],
+        }
+    },
     responses={200: BasicInformationSerializer},
     )
     @transaction.atomic
